@@ -20,7 +20,7 @@ get_ClimateShield(
 
 \item{climate_scenario}{A \code{character} indicating the climate scenario, e.g. \code{'baseline'}, \code{'moderate'}, \code{'extreme'}.}
 
-\item{revised}{A \code{logical} for revised version. Likely to be deprecated as more information is known.}
+\item{revised}{A \code{logical} for \insertCite{isaak2022metapopulations}{fishguts} revised version.}
 
 \item{quiet}{A \code{logical}; suppress info on name, driver, size and spatial reference, or signaling no or multiple layers.}
 
@@ -34,7 +34,7 @@ This function calls Rocky Mountain Research Station (zip files) to get Climate S
 bull trout and cutthroat trout population occurrence scenarios for the western US \insertCite{isaak2017climate}{fishguts}.
 }
 \details{
-The Climate Shield models developed by Isaak et al. (2015) provide stream-specific rangewide
+The Climate Shield models developed by \insertCite{isaak2015cold}{fishguts} provide stream-specific rangewide
  probabilistic predictions about the occurrence of juvenile Bull Trout and Cutthroat Trout under different
  scenarios of climate change and Brook Trout invasions. That information is available here as easy-to-use
  digital maps (.pdf files) and ArcGIS shapefiles for all streams within the historical ranges of these two
@@ -44,7 +44,9 @@ The Climate Shield models developed by Isaak et al. (2015) provide stream-specif
  The climate scenarios used in this project represent baseline (1980s), moderate (2040s), and extreme (2080s)
  climate change conditions and were chosen because they bracket what might be considered a “pristine” historical
  condition and “worst-case” end-of-century conditions.
-
+}
+\note{
+Readme can be found at this [link](https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/publications_posters/2022/Appendix_S6.pdf).
 \itemize{
 \item  \strong{Clearwater River Basin} Includes data up to 2015
 \item \strong{SpoKoot} Includes data up to 2015
