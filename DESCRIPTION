@@ -1,0 +1,15 @@
+Package: fishguts
+Type: Package
+Title: Get Fish Data Organized-ish
+Version: 0.1.0
+Author: Josh Erickson
+Maintainer: Josh Erickson <joshua.l.erickson@usda.gov>
+Description: This package helps me do things at work.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    dplyr,
+    sf
+RoxygenNote: 7.2.3
+RdMacros: Rdpack
