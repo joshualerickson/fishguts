@@ -37,13 +37,13 @@ fetchGL <- function(gdb, ...) {
 #' @param layers A \code{character} of the layer(s) within the GDB, e.g. \code{'HUCs_GL_Runs_R01'} (default).
 #' @param quiet A \code{logical}; suppress info on name, driver, size and spatial reference, or signaling no or multiple layers.
 #' @param simplify A \code{logical}; whether to return a simplified list (\code{data.frame} or \code{sf}) if length(layers) == 1.
-#' @param ... Arguments to pass to `sf::read_sf()`.
+#' @param ... Arguments to pass to `terra::vect()`.
 #' @author Josh Erickson
 #' @seealso `get_GL_layers()`
 #' @return An \code{sf} or \code{data.frame} object.
 #'
 #' @note Please use \code{\link{get_GL_layers}} to get the layer id information needed for the layer argument. This will
-#' help with joining \code{sf} and \code{data.frame} objects.
+#' help with joining \code{sf} and \code{data.frame} objects. Proj4 = '+proj=aea +lat_0=40 +lon_0=-96 +lat_1=20 +lat_2=60 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs'.
 #'
 #' @details  Road Density, Proximity and Erosion Data (both unit sets1) and Stability Index Information. Data is available nationally and by Forest Service Region.
 #' The GDB's currently available:
@@ -86,10 +86,8 @@ get_GL <- function(gdb, layers = 'WCATT_HUCs_GL_Data_USC_Units_R01', version = '
 
   for(i in layers){
 
-    GL_get <- try(list(sf::read_sf(paste0('/vsizip//vsicurl/https://www.fs.usda.gov/research/sites/default/files/2023-02/rmrs',gdb,'_',version,'_gdb.zip'),
-                                   layer = i,
-                                   quiet = quiet,
-                                   as_tibble = FALSE, ...)),
+    GL_get <- try(list(terra::vect(paste0('/vsizip//vsicurl/https://www.fs.usda.gov/research/sites/default/files/2023-02/rmrs',gdb,'_',version,'_gdb.zip'),
+                                   layer = i, ...)),
                                    silent = TRUE)
 
     names(GL_get) <- i
@@ -161,11 +159,11 @@ get_GL_layers <- function(gdb, version = 'v3') {
 
 #' Get NorWeST stream temperature scenarios
 #'
-#' @description This function calls Rocky Mountain Research Station (zip files) to get NorWest stream temperature data \insertCite{isaak2017norwest}{fishguts}.
+#' @description This function calls Rocky Mountain Research Station (zip files) to get NorWest stream temperature data \insertCite{isaak2017norwest}{fishguts} for the month of August.
 #' @param processing_units A \code{character} of the Processing Units, e.g. \code{'SpoKoot'}.
 #' @param type A \code{character} indicating the type of simple feature, e.g. \code{'points'}, \code{'lines'}.
 #' @param quiet A \code{logical}; suppress info on name, driver, size and spatial reference, or signaling no or multiple layers.
-#' @param ... Arguments to pass to `sf::read_sf()`.
+#' @param ... Arguments to pass to `terra::vect()`.
 #' @author Josh Erickson
 #' @return An \code{sf} object.
 #' @references {
@@ -186,6 +184,10 @@ get_GL_layers <- function(gdb, version = 'v3') {
 #' \item \strong{Missouri Headwaters Unit} Includes data up to 2015
 #' \item \strong{Upper Yellowstone-Bighorn} Includes data up to 2015
 #' \item \strong{Upper Missouri-Marias}Includes data up to 2015
+#' \item \strong{Middle Columbia}Includes data up to 2015 and MWMT scenarios.
+#' \item \strong{Salmon River Basin}Includes data up to 2015 and MWMT scenarios.
+#' \item \strong{Snake-Bear}Includes data up to 2015 and MWMT scenarios.
+#' \item \strong{Middle Snake}Includes data up to 2015 and MWMT scenarios.
 #' }
 #' @export
 #' @examples
@@ -204,9 +206,7 @@ get_NorWestStreams <- function(processing_units, type = 'lines', quiet = TRUE, .
 
   .norwest_names <- .get_norwest_streamsegment_names(processing_units = processing_units, type = type)
 
-    nw_get <- try(sf::read_sf(.norwest_names,
-                                   quiet = quiet,
-                                   as_tibble = FALSE, ...),
+    nw_get <- try(terra::vect(.norwest_names, ...),
                   silent = TRUE)
 
   nw_get
@@ -221,24 +221,38 @@ get_NorWestStreams <- function(processing_units, type = 'lines', quiet = TRUE, .
   nw_names <- tolower(c('Eastern Montana', 'Clearwater River Basin', 'CRWB', 'SpoKoot', 'Koot',
                          'Missouri Headwaters', 'Missouri HW', 'Missouri Headwaters Unit', 'Upper Yellowstone-Bighorn',
                          'Upper Yellowstone', 'Bighorn', 'Upper Missouri-Marias', 'Upper Missouri',
+                         'Mid Columbia', 'Middle Columbia', 'Mid Snake', 'Middle Snake',
+                         'Snake Bear', 'Snake-Bear','Salmon River Basin', 'Salmon RB',
                          'Marias'
   ))
 
   nw_names <- match.arg(tolower(processing_units), choices = nw_names, several.ok = TRUE)
 
   switch(type,
-         'points' = {ifelse(nw_names %in% c('eastern montana'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/eastern-montana/NorWeST_PredictedStreamTemperatureLines_EMT.zip',
+         'lines' = {ifelse(nw_names %in% c('eastern montana'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/eastern-montana/NorWeST_PredictedStreamTemperatureLines_EMT.zip',
                           ifelse(nw_names %in% c('clearwater river basin', 'cwrb'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170603_Clearwater/NorWeST_PredictedStreamTempLines_Clearwater.zip',
                                  ifelse(nw_names %in% c('spokoot', 'koot'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170101_02_03_SpoKoot/NorWeST_PredictedStreamTempLines_Spokoot.zip',
                                         ifelse(nw_names %in% c('missouri headwaters', 'missouri hw', 'missouri headwaters unit'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100200_MissouriHeadwaters/NorWeST_PredictedStreamTempLines_MissouriHW_Aug.zip',
                                                ifelse(nw_names %in% c('upper yellowstone-bighorn', 'upper yellowstone', 'bighorn'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100700_100800_100901_100902_UpperYellowstoneBighorn/NorWeST_PredictedStreamTempLines_UpperYellowstoneBighorn_Aug.zip',
-                                                      ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100100_301_302_401_402_500_MariasMissouri/NorWeST_PredictedStreamTempLines_UpperMissouriMarias_Aug.zip', NA))))))},
-         'lines' = {ifelse(nw_names %in% c('eastern montana'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/eastern-montana/NorWeST_PredictedStreamTemperaturePoints_EMT.zip',
+                                                      ifelse(nw_names %in% c('mid columbia', 'middle columbia'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170601_170701_02_03MidColumbia/NorWeST_PredictedStreamTempLines_MidColumbia_Aug.zip',
+                                                             ifelse(nw_names %in% c('mid snake', 'middle snake'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170501_02_MidSnake/NorWeST_PredictedStreamTempLines_MiddleSnake_Aug.zip',
+                                                                    ifelse(nw_names %in% c('snake-bear', 'snake bear'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/160101_02_170401_02_SnakeBear/NorWeST_PredictedStreamTempLines_SnakeBear_Aug.zip',
+                                                                           ifelse(nw_names %in% c('salmon rb', 'salmon river basin'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170602_Salmon/NorWeST_PredictedStreamTempLines_Salmon_Aug.zip',
+                                                             ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100100_301_302_401_402_500_MariasMissouri/NorWeST_PredictedStreamTempLines_UpperMissouriMarias_Aug.zip', NA)))))))))
+
+                          )},
+         'points' = {ifelse(nw_names %in% c('eastern montana'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/eastern-montana/NorWeST_PredictedStreamTemperaturePoints_EMT.zip',
                           ifelse(nw_names %in% c('clearwater river basin', 'cwrb'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170603_Clearwater/NorWeST_PredictedStreamTempPoints_Clearwater.zip',
                                  ifelse(nw_names %in% c('spokoot', 'koot'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170101_02_03_SpoKoot/NorWeST_PredictedStreamTempPoints_Spokoot.zip',
                                         ifelse(nw_names %in% c('missouri headwaters', 'missouri hw', 'missouri headwaters unit'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100200_MissouriHeadwaters/NorWest_PredictedStreamTempPoints_MissouriHW_Aug.zip',
                                                ifelse(nw_names %in% c('upper yellowstone-bighorn', 'upper yellowstone', 'bighorn'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100700_100800_100901_100902_UpperYellowstoneBighorn/NorWeST_PredictedStreamTempPoints_UpperYellowstoneBighorn_Aug.zip',
-                                                      ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100100_301_302_401_402_500_MariasMissouri/NorWeST_PredictedStreamTempPoints_UpperMissouriMarias_Aug.zip', NA))))))}
+                                               ifelse(nw_names %in% c('mid columbia', 'middle columbia'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/170601_170701_02_03MidColumbia/NorWeST_ObservedTempPoints_MidColumbia.zip',
+                                               ifelse(nw_names %in% c('mid snake', 'middle snake'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/170501_02_MidSnake/NorWeST_ObservedTempPoints_MiddleSnake.zip',
+                                               ifelse(nw_names %in% c('snake-bear', 'snake bear'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/160101_02_170401_02_SnakeBear/NorWeST_ObservedTempPoints_SnakeBear.zip',
+                                               ifelse(nw_names %in% c('salmon rb', 'salmon river basin'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/170602_Salmon/NorWeST_ObservedTempPoints_Salmon.zip',
+                                                      ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100100_301_302_401_402_500_MariasMissouri/NorWeST_PredictedStreamTempPoints_UpperMissouriMarias_Aug.zip', NA)))))))))
+
+                          )}
   )
 
 }
@@ -254,7 +268,7 @@ get_NorWestStreams <- function(processing_units, type = 'lines', quiet = TRUE, .
 #' @param climate_scenario A \code{character} indicating the climate scenario, e.g. \code{'baseline'}, \code{'moderate'}, \code{'extreme'}.
 #' @param revised A \code{logical} for \insertCite{isaak2022metapopulations}{fishguts} revised version.
 #' @param quiet A \code{logical}; suppress info on name, driver, size and spatial reference, or signaling no or multiple layers.
-#' @param ... Arguments to pass to `sf::read_sf()`.
+#' @param ... Arguments to pass to `terra::vect()`.
 #' @author Josh Erickson
 #' @return An \code{sf} object.
 #' @references {
@@ -305,9 +319,7 @@ get_ClimateShield <- function(processing_units,
 
   }
 
-  nw_get <- try(sf::read_sf(.climate_shield_names,
-                            quiet = quiet,
-                            as_tibble = FALSE, ...),
+  nw_get <- try(terra::vect(.climate_shield_names, ...),
                 silent = TRUE)
 
   nw_get
@@ -352,6 +364,7 @@ get_ClimateShield <- function(processing_units,
 #'
 #' @description This function calls Rocky Mountain Research Station (zip files) to get bull trout natal habitat patches
 #' from \insertCite{isaak2022metapopulations}{fishguts} paper with associated model parameters.
+#' @param ... Arguments to pass to `terra::vect()`.
 #' @return A \code{sf} object.
 #' @export
 #'
@@ -362,10 +375,12 @@ get_ClimateShield <- function(processing_units,
 #' isaak2022 <- get_BullTroutNatalPatches()
 #' }
 #'
-get_BullTroutNatalPatches <- function() {
+get_BullTroutNatalPatches <- function(...) {
 
-  try(sf::read_sf('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/2022/BullTroutPatches_ObservedDataset_Isaak_et_al_2022_AppendixS1.zip',
-                  as_tibble = FALSE),
-      silent = TRUE)
+  try(terra::vect('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/2022/BullTroutPatches_ObservedDataset_Isaak_et_al_2022_AppendixS1.zip'),
+      silent = TRUE,
+      ...)
 
 }
+
+

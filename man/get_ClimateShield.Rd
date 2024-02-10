@@ -24,7 +24,7 @@ get_ClimateShield(
 
 \item{quiet}{A \code{logical}; suppress info on name, driver, size and spatial reference, or signaling no or multiple layers.}
 
-\item{...}{Arguments to pass to `sf::read_sf()`.}
+\item{...}{Arguments to pass to `terra::vect()`.}
 }
 \value{
 An \code{sf} object.

@@ -10,6 +10,6 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
     dplyr,
-    sf
+    terra
 RoxygenNote: 7.2.3
 RdMacros: Rdpack

@@ -13,13 +13,13 @@ get_NorWestStreams(processing_units, type = "lines", quiet = TRUE, ...)
 
 \item{quiet}{A \code{logical}; suppress info on name, driver, size and spatial reference, or signaling no or multiple layers.}
 
-\item{...}{Arguments to pass to `sf::read_sf()`.}
+\item{...}{Arguments to pass to `terra::vect()`.}
 }
 \value{
 An \code{sf} object.
 }
 \description{
-This function calls Rocky Mountain Research Station (zip files) to get NorWest stream temperature data \insertCite{isaak2017norwest}{fishguts}.
+This function calls Rocky Mountain Research Station (zip files) to get NorWest stream temperature data \insertCite{isaak2017norwest}{fishguts} for the month of August.
 }
 \details{
 NorWeST stream temperature scenario maps were developed at a 1-kilometer resolution using spatial statistical stream network models.
@@ -36,6 +36,10 @@ Application of these techniques in previous research has yielded accurate and un
 \item \strong{Missouri Headwaters Unit} Includes data up to 2015
 \item \strong{Upper Yellowstone-Bighorn} Includes data up to 2015
 \item \strong{Upper Missouri-Marias}Includes data up to 2015
+\item \strong{Middle Columbia}Includes data up to 2015 and MWMT scenarios.
+\item \strong{Salmon River Basin}Includes data up to 2015 and MWMT scenarios.
+\item \strong{Snake-Bear}Includes data up to 2015 and MWMT scenarios.
+\item \strong{Middle Snake}Includes data up to 2015 and MWMT scenarios.
 }
 }
 \examples{

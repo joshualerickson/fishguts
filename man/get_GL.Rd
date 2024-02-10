@@ -24,7 +24,7 @@ get_GL(
 
 \item{simplify}{A \code{logical}; whether to return a simplified list (\code{data.frame} or \code{sf}) if length(layers) == 1.}
 
-\item{...}{Arguments to pass to `sf::read_sf()`.}
+\item{...}{Arguments to pass to `terra::vect()`.}
 }
 \value{
 An \code{sf} or \code{data.frame} object.
@@ -51,7 +51,7 @@ The GDB's currently available:
 }
 \note{
 Please use \code{\link{get_GL_layers}} to get the layer id information needed for the layer argument. This will
-help with joining \code{sf} and \code{data.frame} objects.
+help with joining \code{sf} and \code{data.frame} objects. Proj4 = '+proj=aea +lat_0=40 +lon_0=-96 +lat_1=20 +lat_2=60 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs'.
 }
 \examples{
 \dontrun{

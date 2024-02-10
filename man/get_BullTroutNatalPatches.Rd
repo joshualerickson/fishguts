@@ -4,7 +4,10 @@
 \alias{get_BullTroutNatalPatches}
 \title{Get Bull Trout Natal Habitat Patches}
 \usage{
-get_BullTroutNatalPatches()
+get_BullTroutNatalPatches(...)
+}
+\arguments{
+\item{...}{Arguments to pass to `terra::vect()`.}
 }
 \value{
 A \code{sf} object.
