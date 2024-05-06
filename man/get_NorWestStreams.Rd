@@ -35,11 +35,11 @@ Application of these techniques in previous research has yielded accurate and un
 \item \strong{SpoKoot} Includes data up to 2015
 \item \strong{Missouri Headwaters Unit} Includes data up to 2015
 \item \strong{Upper Yellowstone-Bighorn} Includes data up to 2015
-\item \strong{Upper Missouri-Marias}Includes data up to 2015
-\item \strong{Middle Columbia}Includes data up to 2015 and MWMT scenarios.
-\item \strong{Salmon River Basin}Includes data up to 2015 and MWMT scenarios.
-\item \strong{Snake-Bear}Includes data up to 2015 and MWMT scenarios.
-\item \strong{Middle Snake}Includes data up to 2015 and MWMT scenarios.
+\item \strong{Upper Missouri-Marias} Includes data up to 2015
+\item \strong{Middle Columbia} Includes data up to 2015 and MWMT scenarios.
+\item \strong{Salmon River Basin} Includes data up to 2015 and MWMT scenarios.
+\item \strong{Snake-Bear} Includes data up to 2015 and MWMT scenarios.
+\item \strong{Middle Snake} Includes data up to 2015 and MWMT scenarios.
 }
 }
 \examples{

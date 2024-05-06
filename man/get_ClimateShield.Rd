@@ -46,7 +46,7 @@ The Climate Shield models developed by \insertCite{isaak2015cold}{fishguts} prov
  condition and “worst-case” end-of-century conditions.
 }
 \note{
-Readme can be found at this [link](https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/publications_posters/2022/Appendix_S6.pdf).
+Readme can be found at this (link)[https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/publications_posters/2022/Appendix_S6.pdf].
 \itemize{
 \item  \strong{Clearwater River Basin} Includes data up to 2015
 \item \strong{SpoKoot} Includes data up to 2015

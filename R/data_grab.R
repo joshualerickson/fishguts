@@ -183,11 +183,11 @@ get_GL_layers <- function(gdb, version = 'v3') {
 #' \item \strong{SpoKoot} Includes data up to 2015
 #' \item \strong{Missouri Headwaters Unit} Includes data up to 2015
 #' \item \strong{Upper Yellowstone-Bighorn} Includes data up to 2015
-#' \item \strong{Upper Missouri-Marias}Includes data up to 2015
-#' \item \strong{Middle Columbia}Includes data up to 2015 and MWMT scenarios.
-#' \item \strong{Salmon River Basin}Includes data up to 2015 and MWMT scenarios.
-#' \item \strong{Snake-Bear}Includes data up to 2015 and MWMT scenarios.
-#' \item \strong{Middle Snake}Includes data up to 2015 and MWMT scenarios.
+#' \item \strong{Upper Missouri-Marias} Includes data up to 2015
+#' \item \strong{Middle Columbia} Includes data up to 2015 and MWMT scenarios.
+#' \item \strong{Salmon River Basin} Includes data up to 2015 and MWMT scenarios.
+#' \item \strong{Snake-Bear} Includes data up to 2015 and MWMT scenarios.
+#' \item \strong{Middle Snake} Includes data up to 2015 and MWMT scenarios.
 #' }
 #' @export
 #' @examples
@@ -206,8 +206,15 @@ get_NorWestStreams <- function(processing_units, type = 'lines', quiet = TRUE, .
 
   .norwest_names <- .get_norwest_streamsegment_names(processing_units = processing_units, type = type)
 
-    nw_get <- try(terra::vect(.norwest_names, ...),
-                  silent = TRUE)
+    # nw_get <- try(terra::vect(.norwest_names, ...),
+    #               silent = TRUE)
+
+  temp <- tempfile(fileext = '.zip')
+  download.file(.norwest_names,temp)
+
+  nw_get <- sf::read_sf(unzip(temp)[grepl('*.shp$', unzip(temp))])
+
+  unlink(temp)
 
   nw_get
 }
@@ -229,28 +236,28 @@ get_NorWestStreams <- function(processing_units, type = 'lines', quiet = TRUE, .
   nw_names <- match.arg(tolower(processing_units), choices = nw_names, several.ok = TRUE)
 
   switch(type,
-         'lines' = {ifelse(nw_names %in% c('eastern montana'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/eastern-montana/NorWeST_PredictedStreamTemperatureLines_EMT.zip',
-                          ifelse(nw_names %in% c('clearwater river basin', 'cwrb'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170603_Clearwater/NorWeST_PredictedStreamTempLines_Clearwater.zip',
-                                 ifelse(nw_names %in% c('spokoot', 'koot'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170101_02_03_SpoKoot/NorWeST_PredictedStreamTempLines_Spokoot.zip',
-                                        ifelse(nw_names %in% c('missouri headwaters', 'missouri hw', 'missouri headwaters unit'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100200_MissouriHeadwaters/NorWeST_PredictedStreamTempLines_MissouriHW_Aug.zip',
-                                               ifelse(nw_names %in% c('upper yellowstone-bighorn', 'upper yellowstone', 'bighorn'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100700_100800_100901_100902_UpperYellowstoneBighorn/NorWeST_PredictedStreamTempLines_UpperYellowstoneBighorn_Aug.zip',
-                                                      ifelse(nw_names %in% c('mid columbia', 'middle columbia'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170601_170701_02_03MidColumbia/NorWeST_PredictedStreamTempLines_MidColumbia_Aug.zip',
-                                                             ifelse(nw_names %in% c('mid snake', 'middle snake'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170501_02_MidSnake/NorWeST_PredictedStreamTempLines_MiddleSnake_Aug.zip',
-                                                                    ifelse(nw_names %in% c('snake-bear', 'snake bear'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/160101_02_170401_02_SnakeBear/NorWeST_PredictedStreamTempLines_SnakeBear_Aug.zip',
-                                                                           ifelse(nw_names %in% c('salmon rb', 'salmon river basin'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170602_Salmon/NorWeST_PredictedStreamTempLines_Salmon_Aug.zip',
-                                                             ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100100_301_302_401_402_500_MariasMissouri/NorWeST_PredictedStreamTempLines_UpperMissouriMarias_Aug.zip', NA)))))))))
+         'lines' = {ifelse(nw_names %in% c('eastern montana'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/eastern-montana/NorWeST_PredictedStreamTemperatureLines_EMT.zip',
+                          ifelse(nw_names %in% c('clearwater river basin', 'cwrb'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170603_Clearwater/NorWeST_PredictedStreamTempLines_Clearwater.zip',
+                                 ifelse(nw_names %in% c('spokoot', 'koot'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170101_02_03_SpoKoot/NorWeST_PredictedStreamTempLines_Spokoot.zip',
+                                        ifelse(nw_names %in% c('missouri headwaters', 'missouri hw', 'missouri headwaters unit'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100200_MissouriHeadwaters/NorWeST_PredictedStreamTempLines_MissouriHW_Aug.zip',
+                                               ifelse(nw_names %in% c('upper yellowstone-bighorn', 'upper yellowstone', 'bighorn'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100700_100800_100901_100902_UpperYellowstoneBighorn/NorWeST_PredictedStreamTempLines_UpperYellowstoneBighorn_Aug.zip',
+                                                      ifelse(nw_names %in% c('mid columbia', 'middle columbia'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170601_170701_02_03MidColumbia/NorWeST_PredictedStreamTempLines_MidColumbia_Aug.zip',
+                                                             ifelse(nw_names %in% c('mid snake', 'middle snake'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170501_02_MidSnake/NorWeST_PredictedStreamTempLines_MiddleSnake_Aug.zip',
+                                                                    ifelse(nw_names %in% c('snake-bear', 'snake bear'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/160101_02_170401_02_SnakeBear/NorWeST_PredictedStreamTempLines_SnakeBear_Aug.zip',
+                                                                           ifelse(nw_names %in% c('salmon rb', 'salmon river basin'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170602_Salmon/NorWeST_PredictedStreamTempLines_Salmon_Aug.zip',
+                                                             ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100100_301_302_401_402_500_MariasMissouri/NorWeST_PredictedStreamTempLines_UpperMissouriMarias_Aug.zip', NA)))))))))
 
                           )},
-         'points' = {ifelse(nw_names %in% c('eastern montana'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/eastern-montana/NorWeST_PredictedStreamTemperaturePoints_EMT.zip',
-                          ifelse(nw_names %in% c('clearwater river basin', 'cwrb'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170603_Clearwater/NorWeST_PredictedStreamTempPoints_Clearwater.zip',
-                                 ifelse(nw_names %in% c('spokoot', 'koot'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170101_02_03_SpoKoot/NorWeST_PredictedStreamTempPoints_Spokoot.zip',
-                                        ifelse(nw_names %in% c('missouri headwaters', 'missouri hw', 'missouri headwaters unit'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100200_MissouriHeadwaters/NorWest_PredictedStreamTempPoints_MissouriHW_Aug.zip',
-                                               ifelse(nw_names %in% c('upper yellowstone-bighorn', 'upper yellowstone', 'bighorn'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100700_100800_100901_100902_UpperYellowstoneBighorn/NorWeST_PredictedStreamTempPoints_UpperYellowstoneBighorn_Aug.zip',
-                                               ifelse(nw_names %in% c('mid columbia', 'middle columbia'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/170601_170701_02_03MidColumbia/NorWeST_ObservedTempPoints_MidColumbia.zip',
-                                               ifelse(nw_names %in% c('mid snake', 'middle snake'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/170501_02_MidSnake/NorWeST_ObservedTempPoints_MiddleSnake.zip',
-                                               ifelse(nw_names %in% c('snake-bear', 'snake bear'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/160101_02_170401_02_SnakeBear/NorWeST_ObservedTempPoints_SnakeBear.zip',
-                                               ifelse(nw_names %in% c('salmon rb', 'salmon river basin'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/170602_Salmon/NorWeST_ObservedTempPoints_Salmon.zip',
-                                                      ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), '/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100100_301_302_401_402_500_MariasMissouri/NorWeST_PredictedStreamTempPoints_UpperMissouriMarias_Aug.zip', NA)))))))))
+         'points' = {ifelse(nw_names %in% c('eastern montana'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/eastern-montana/NorWeST_PredictedStreamTemperaturePoints_EMT.zip',
+                          ifelse(nw_names %in% c('clearwater river basin', 'cwrb'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170603_Clearwater/NorWeST_PredictedStreamTempPoints_Clearwater.zip',
+                                 ifelse(nw_names %in% c('spokoot', 'koot'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/170101_02_03_SpoKoot/NorWeST_PredictedStreamTempPoints_Spokoot.zip',
+                                        ifelse(nw_names %in% c('missouri headwaters', 'missouri hw', 'missouri headwaters unit'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100200_MissouriHeadwaters/NorWest_PredictedStreamTempPoints_MissouriHW_Aug.zip',
+                                               ifelse(nw_names %in% c('upper yellowstone-bighorn', 'upper yellowstone', 'bighorn'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100700_100800_100901_100902_UpperYellowstoneBighorn/NorWeST_PredictedStreamTempPoints_UpperYellowstoneBighorn_Aug.zip',
+                                               ifelse(nw_names %in% c('mid columbia', 'middle columbia'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/170601_170701_02_03MidColumbia/NorWeST_ObservedTempPoints_MidColumbia.zip',
+                                               ifelse(nw_names %in% c('mid snake', 'middle snake'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/170501_02_MidSnake/NorWeST_ObservedTempPoints_MiddleSnake.zip',
+                                               ifelse(nw_names %in% c('snake-bear', 'snake bear'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/160101_02_170401_02_SnakeBear/NorWeST_ObservedTempPoints_SnakeBear.zip',
+                                               ifelse(nw_names %in% c('salmon rb', 'salmon river basin'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ObservedStreamTemperatureMaps/170602_Salmon/NorWeST_ObservedTempPoints_Salmon.zip',
+                                                      ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), 'https://www.fs.usda.gov/rm/boise/AWAE/projects/NorWeST/downloads/ModeledStreamTemperatureMaps/100100_301_302_401_402_500_MariasMissouri/NorWeST_PredictedStreamTempPoints_UpperMissouriMarias_Aug.zip', NA)))))))))
 
                           )}
   )
@@ -285,7 +292,7 @@ get_NorWestStreams <- function(processing_units, type = 'lines', quiet = TRUE, .
 #'  The climate scenarios used in this project represent baseline (1980s), moderate (2040s), and extreme (2080s)
 #'  climate change conditions and were chosen because they bracket what might be considered a “pristine” historical
 #'  condition and “worst-case” end-of-century conditions.
-#' @note Readme can be found at this [link](https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/publications_posters/2022/Appendix_S6.pdf).
+#' @note Readme can be found at this (link)[https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/publications_posters/2022/Appendix_S6.pdf].
 #' \itemize{
 #' \item  \strong{Clearwater River Basin} Includes data up to 2015
 #' \item \strong{SpoKoot} Includes data up to 2015
@@ -311,7 +318,7 @@ get_ClimateShield <- function(processing_units,
 
   if(revised){
 
-   .climate_shield_names <- paste0('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/2022/BullTroutPatchScenarios_',capit(climate_scenario),'Climate_Isaak_et_al_2022_AppendixS6.zip')
+   .climate_shield_names <- paste0('https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/2022/BullTroutPatchScenarios_',capit(climate_scenario),'Climate_Isaak_et_al_2022_AppendixS6.zip')
 
   } else {
 
@@ -319,8 +326,17 @@ get_ClimateShield <- function(processing_units,
 
   }
 
-  nw_get <- try(terra::vect(.climate_shield_names, ...),
-                silent = TRUE)
+  # nw_get <- try(terra::vect(.climate_shield_names, ...),
+  #               silent = TRUE)
+
+
+  temp <- tempfile(fileext = '.zip')
+
+  download.file(.climate_shield_names,temp)
+
+  nw_get <- sf::read_sf(unzip(temp)[grepl('*.shp$', unzip(temp))])
+
+  unlink(temp)
 
   nw_get
 
@@ -347,14 +363,14 @@ get_ClimateShield <- function(processing_units,
                     'extreme' = '2080')
 
   switch(type,
-         'bt' = {ifelse(nw_names %in% c('clearwater river basin', 'cwrb'), paste0('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/Clearwater/Clearwater_B0BK0',cs_name,'.zip/ClimateShield/Clearwater/B0BK0',cs_name,'_Clearwater.shp'),
-                                   ifelse(nw_names %in% c('spokoot', 'koot'), paste0('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/SpoKoot/SpoKoot_B0BK0',cs_name,'.zip/ClimateShield/SpoKoot/B0BK0', cs_name,'_SpoKoot.shp'),
-                                                        ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), paste0('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/UpperMissouriMarias/UpperMissouriMarias_B0BK0',cs_name,'.zip/ClimateShield/UpperMissouriMarias/B0BK0', cs_name,'_UpperMissouriMarias.shp'), NA)))},
-         'ct' = {ifelse(nw_names %in% c('clearwater river basin', 'cwrb'), paste0('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/Clearwater/Clearwater_C0BK0',cs_name,'.zip/ClimateShield/Clearwater/C0BK0',cs_name,'_Clearwater.shp'),
-                                  ifelse(nw_names %in% c('spokoot', 'koot'), paste0('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/SpoKoot/SpoKoot_C0BK0',cs_name,'.zip/ClimateShield/SpoKoot/C0BK0',cs_name,'_SpoKoot.shp'),
-                                         ifelse(nw_names %in% c('missouri headwaters', 'missouri hw', 'missouri headwaters unit'), paste0('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/MissouriHW/MissouriHW_C0BK0',cs_name,'.zip/ClimateShield/MissouriHW/C0BK0',cs_name,'_MissouriHW.shp'),
-                                                ifelse(nw_names %in% c('upper yellowstone-bighorn', 'upper yellowstone', 'bighorn'), paste0('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/UpperYellowstoneBighorn/UpperYellowstoneBighorn_C0BK0',cs_name,'.zip/ClimateShield/UpperYellowstoneBighorn/C0BK0',cs_name,'_UpperYellowstoneBighorn.shp'),
-                                                       ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), paste0('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/UpperMissouriMarias/UpperMissouriMarias_C0BK0',cs_name,'.zip/ClimateShield/UpperMissouriMarias/C0BK0',cs_name,'_UpperMissouriMarias.shp'), NA)))))}
+         'bt' = {ifelse(nw_names %in% c('clearwater river basin', 'cwrb'), paste0('https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/Clearwater/Clearwater_B0BK0',cs_name,'.zip'),
+                                   ifelse(nw_names %in% c('spokoot', 'koot'), paste0('https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/SpoKoot/SpoKoot_B0BK0',cs_name,'.zip'),
+                                                        ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), paste0('https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/UpperMissouriMarias/UpperMissouriMarias_B0BK0',cs_name,'.zip'), NA)))},
+         'ct' = {ifelse(nw_names %in% c('clearwater river basin', 'cwrb'), paste0('https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/Clearwater/Clearwater_C0BK0',cs_name,'.zip'),
+                                  ifelse(nw_names %in% c('spokoot', 'koot'), paste0('https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/SpoKoot/SpoKoot_C0BK0',cs_name,'.zip'),
+                                         ifelse(nw_names %in% c('missouri headwaters', 'missouri hw', 'missouri headwaters unit'), paste0('https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/MissouriHW/MissouriHW_C0BK0',cs_name,'.zip'),
+                                                ifelse(nw_names %in% c('upper yellowstone-bighorn', 'upper yellowstone', 'bighorn'), paste0('https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/UpperYellowstoneBighorn/UpperYellowstoneBighorn_C0BK0',cs_name,'.zip'),
+                                                       ifelse(nw_names %in% c('upper missouri-marias', 'upper missouri', 'marias'), paste0('https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/UpperMissouriMarias/UpperMissouriMarias_C0BK0',cs_name,'.zip'), NA)))))}
   )
 
 }
@@ -377,9 +393,17 @@ get_ClimateShield <- function(processing_units,
 #'
 get_BullTroutNatalPatches <- function(...) {
 
-  try(terra::vect('/vsizip//vsicurl/https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/2022/BullTroutPatches_ObservedDataset_Isaak_et_al_2022_AppendixS1.zip'),
-      silent = TRUE,
-      ...)
+  url <- 'https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/2022/BullTroutPatches_ObservedDataset_Isaak_et_al_2022_AppendixS1.zip'
+
+  temp <- tempfile(fileext = '.zip')
+
+  download.file(url,temp)
+
+  nw_get <- sf::read_sf(unzip(temp)[grepl('*.shp$', unzip(temp))])
+
+  unlink(temp)
+
+  nw_get
 
 }
 
