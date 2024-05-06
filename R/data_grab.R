@@ -210,9 +210,11 @@ get_NorWestStreams <- function(processing_units, type = 'lines', quiet = TRUE, .
     #               silent = TRUE)
 
   temp <- tempfile(fileext = '.zip')
+  output <- tempfile()
+
   download.file(.norwest_names,temp)
 
-  nw_get <- sf::read_sf(unzip(temp)[grepl('*.shp$', unzip(temp))])
+  nw_get <- sf::read_sf(unzip(temp, exdir = output)[grepl('*.shp$', unzip(temp, exdir = output))])
 
   unlink(temp)
 
@@ -331,10 +333,11 @@ get_ClimateShield <- function(processing_units,
 
 
   temp <- tempfile(fileext = '.zip')
+  output <- tempfile()
 
   download.file(.climate_shield_names,temp)
 
-  nw_get <- sf::read_sf(unzip(temp)[grepl('*.shp$', unzip(temp))])
+  nw_get <- sf::read_sf(unzip(temp, exdir = output)[grepl('*.shp$', unzip(temp, exdir = output))])
 
   unlink(temp)
 
@@ -396,10 +399,11 @@ get_BullTroutNatalPatches <- function(...) {
   url <- 'https://www.fs.usda.gov/rm/boise/AWAE/projects/ClimateShield/downloads/LookUpTables/2022/BullTroutPatches_ObservedDataset_Isaak_et_al_2022_AppendixS1.zip'
 
   temp <- tempfile(fileext = '.zip')
+  output <- tempfile()
 
   download.file(url,temp)
 
-  nw_get <- sf::read_sf(unzip(temp)[grepl('*.shp$', unzip(temp))])
+  nw_get <- sf::read_sf(unzip(temp, exdir = output)[grepl('*.shp$', unzip(temp, exdir = output))])
 
   unlink(temp)
 
